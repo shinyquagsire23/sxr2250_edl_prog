@@ -95,24 +95,16 @@ void uart_putc(char ch) {
 }
 
 void uart_puts(const char* s) {
-    for (int i = 0; i < strlen(s); i++) {
-        uart_putc(s[i]);
-        if (s[i] == '\n') {
+    while(*s) {
+        uart_putc(*s);
+        if (*s == '\n') {
             uart_putc('\r');
         }
+        s++;
     }
 }
 
-const char* my_sleepover = "\n"
-",[ ].         its                   \n"
-"\\ o /         *MY*                 \n"
-" :::        sleepover and           \n"
-"  ::           *I*                  \n" 
-"/   i    get to choose the firehose \n"
-"\n";
-
 int uart_init(int baudrate) {
     uart_baud = baudrate;
-    uart_puts(my_sleepover);
     return 0;
 }

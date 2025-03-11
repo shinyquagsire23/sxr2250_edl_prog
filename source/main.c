@@ -15,9 +15,22 @@ void hard_reset(void)
 		    "b .\n");
 }
 
+const char* my_sleepover_ = "\n"
+",[ ].         its                   \n"
+"\\ o /         *MY*                 \n"
+" :::        sleepover and           \n"
+"  ::           *I*                  \n" 
+" ;  i    get to choose the firehose \n"
+"\n";
+
 int main(void)
 {
     uart_init(115200);
+
+    uart_puts("\n\nStart sxr2250_edl_prog...\n");
+    uart_puts(my_sleepover_);
+
+    //uart_puts(my_sleepover_);
 
     /*if (*(vu32*)0x14828FA8 == 0x14000002) {
         hard_reset();
