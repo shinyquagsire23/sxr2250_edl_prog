@@ -7,13 +7,18 @@
 #include "uart.h"
 #include "spmi.h"
 #include "tinyprintf.h"
-//#include "sxr2250_fh_part3_bin.h"
-//#include "uzlib/tinf.h"
+#include "u-boot-dtb-gz_bin.h"
+#include "uzlib/tinf.h"
 
 #define IMEM_BASE (0x146aa000)
 #define IMEM_REBOOT_REASON (*(vu32*)(IMEM_BASE + 0x65C))
 
 #define TCSR_BOOT_MISC_DETECT (*(vu32*)(0x1FD3000))
+
+#define EMERGENCY_DLOAD_MAGIC1    0x322A4F99
+#define EMERGENCY_DLOAD_MAGIC2    0xC67E4350
+#define EMERGENCY_DLOAD_MAGIC3    0x77777777
+#define EMMC_DLOAD_TYPE     0x2
 
 void hard_reset(void)
 {
@@ -35,6 +40,8 @@ const char* my_sleepover_ = "\n"
 "  ::           *I*                  \n" 
 " ;  i    get to choose the firehose \n"
 "\n";
+
+TINF_DATA d = {0};
 
 //https://github.com/facebookincubator/oculus-linux-kernel/blob/oculus-go-kernel-master/drivers/power/reset/msm-poweroff.c
 //https://github.com/facebookincubator/oculus-linux-kernel/blob/oculus-go-kernel-master/drivers/platform/msm/qpnp-power-on.c#L357
@@ -61,33 +68,32 @@ int main(void)
     // Interesting note: 0x14828000~0x14932000 is zeroed and writes do not go through.
     // TZ carveout I guess?
 
+    //hexdump("", (u8*)(0x80000000+0x029a2000), 0x1000);
 
 
-#if 0
-    printf("Decompressing...\n");
+#if 1
+    printf("Decompress init...\n");
     uzlib_init();
-    printf("init done\n");
+    printf("Decompress init done.\n");
     
-    d.source = sxr2250_fh_part3_bin;
-    d.dest = (uint8_t*)0x80100000;
-    d.destSize = sxr2250_fh_part3_bin_size;
+    d.source = u_boot_dtb_gz_bin;
+    d.dest = (uint8_t*)0xA0000000;
+    d.destSize = u_boot_dtb_gz_bin_size;
     
-    printf("init? adsf\n\n");
     // use last 32K of accessible DRAM as a dictionary buffer
     uzlib_uncompress_init(&d, (void*)0x80000000, 32*1024);
-    printf("init asdfff\n");
     
     int res = uzlib_zlib_parse_header(&d); // returns dict_opt
     if (res < 0) {
         printf("Failed to parse header.\n");
         hard_reset();
     }
-    printf("header\n");
+    printf("Decompressing...\n");
     
     do {
         //res = uzlib_uncompress_chksum(&d);
         res = uzlib_uncompress(&d);
-        printf("%x\n", res);
+        printf("...\n");
     } while (res == TINF_OK);
     
     if(res != TINF_DONE) {
@@ -95,16 +101,12 @@ int main(void)
         hard_reset();
     }
     printf("\n");
-    hexdump("", (u8*)0x80100000, 0x100);
-    Elf64_Ehdr* ehdr = (Elf64_Ehdr*)0x80100000;
-    u32 num_phdrs = ehdr->e_phnum;
-    printf("%x phdrs\n", num_phdrs);
-    printf("%lx phdr offs\n", ehdr->e_phoff);
-
-    Elf64_Phdr* phdrs = (Elf64_Phdr*)(0x80100000 + ehdr->e_phoff);
-    for (int i = 0; i < num_phdrs; i++) {
-        printf("%x %lx %lx\n", i, phdrs[i].p_offset, phdrs[i].p_paddr);
-    }
+    //hexdump("", (u8*)0xA0000000, 0x100);
+    printf("Jumping to u-boot...");
+    printf("\n\n");
+    
+    void __attribute__((noreturn)) (*entry)(void* fdt) = (void*)0xA0000000;
+    entry(NULL);
 #endif
     hard_reset();
 

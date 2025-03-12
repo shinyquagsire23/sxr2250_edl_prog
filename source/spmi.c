@@ -156,7 +156,7 @@ int spmi_write(int usid, int pid, int off, u8 val)
 
     channel = channel_map[usid][pid] & SPMI_CHANNEL_MASK;
 
-    printf("%s: [%d:%d] %s: channel %d\n", "spmi", usid, pid, __func__, channel);
+    //printf("%s: [%d:%d] %s: channel %d\n", "spmi", usid, pid, __func__, channel);
 
     switch (arb_ver) {
     case V1:
@@ -223,7 +223,7 @@ int spmi_read(int usid, int pid, int off)
 
     channel = channel_map[usid][pid] & SPMI_CHANNEL_MASK;
 
-    printf("%s: [%d:%d] %s: channel %d\n", "spmi", usid, pid, __func__, channel);
+    //printf("%s: [%d:%d] %s: channel %d\n", "spmi", usid, pid, __func__, channel);
 
     switch (arb_ver) {
     case V1:

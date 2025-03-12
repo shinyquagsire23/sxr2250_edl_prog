@@ -13,7 +13,7 @@ PHDRS
 
 MEMORY
   {
-  ram : ORIGIN = 0x14980000, LENGTH = 3M /* TODO verify the length */
+  ram : ORIGIN = 0x14980000, LENGTH = 0x80000 /* TODO verify the length */
   dram : ORIGIN = 0x80000000, LENGTH = 0x0026f000 /* TODO verify the length */
   }
 
