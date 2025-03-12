@@ -2,6 +2,7 @@
 #include "types.h"
 
 #include <string.h>
+#include "tinyprintf.h"
 
 u64 getle64(const u8* p)
 {
@@ -161,10 +162,9 @@ void* memcpy32(void* dst, const void* src, size_t size)
     return dst;
 }
 
-void hexdump_f(const char* prefix, const u8* data, u32 size, int (*f)(const char* fmt, ...))
+void hexdump_f(const char* prefix, const u8* data, u32 size, void (*f)(char* fmt, ...))
 {
     u32 i;
-    u32 prefixlen = strlen(prefix);
     u32 offs = 0;
     u32 line = 0;
     while(size)
@@ -174,10 +174,7 @@ void hexdump_f(const char* prefix, const u8* data, u32 size, int (*f)(const char
         if (max > size)
             max = size;
 
-        if (line==0)
-            f("%s", prefix);
-        else
-            f("%*s", prefixlen, "");
+        f("%s", prefix);
 
 
         for(i=0; i<max; i++)
@@ -191,7 +188,7 @@ void hexdump_f(const char* prefix, const u8* data, u32 size, int (*f)(const char
 
 void hexdump(const char* prefix, const u8* data, u32 size)
 {
-	//hexdump_f(prefix, data, size, printf);
+	hexdump_f(prefix, data, size, printf);
 }
 
 bool is_set(u8* buffer, size_t size)

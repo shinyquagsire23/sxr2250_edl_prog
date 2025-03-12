@@ -66,7 +66,7 @@ void putbe64(u8* p, u64 n);
 void* memcpy32(void* dst, const void* src, size_t size);
 
 void hexdump(const char* prefix, const u8* data, u32 size);
-void hexdump_f(const char* prefix, const u8* data, u32 size, int (*f)(const char* fmt, ...));
+void hexdump_f(const char* prefix, const u8* data, u32 size, void (*f)(char* fmt, ...));
 
 bool is_set(u8* buffer, size_t size);
 

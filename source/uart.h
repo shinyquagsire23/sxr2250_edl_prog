@@ -436,7 +436,7 @@ int uart_init(int baudrate);
 #define S_OPCODE_SHIFT  27
 
 void uart_puts(const char* s);
-void uart_putc(char ch);
+void uart_putc(void* putp, char ch);
 int uart_init(int baudrate);
 
 #endif // _UART_H_

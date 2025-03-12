@@ -45,7 +45,7 @@ __start:
     msr DAIFClr, #4
     isb 
     
-    ldr x0, =__stack_end__
+    ldr x0, =0x90000000
     mov sp, x0
     
     mrs x0, SCTLR_EL1
@@ -71,3 +71,10 @@ _bss_clear_loop:
 
 vbar_el1_synchronous:
     b .
+
+.global get_currentel
+get_currentel:
+    mrs x0, currentel
+    lsr x0, x0, #0x2
+    and x0, x0, #0x3
+    ret

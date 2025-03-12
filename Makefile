@@ -5,6 +5,13 @@ AS := $(CC_PREFIX)as
 LD := $(CC_PREFIX)gcc
 OBJCOPY := $(CC_PREFIX)objcopy
 
+define bin2o
+        $(eval _tmpasm := $(shell mktemp))
+        $(SILENTCMD)bin2s -a 4 -H `(echo $(<F) | tr . _)`.h $< > $(_tmpasm)
+        $(SILENTCMD)$(CC) -x assembler-with-cpp $(CPPFLAGS) $(ASFLAGS) -c $(_tmpasm) -o $(<F).o
+        @rm $(_tmpasm)
+endef
+
 export TARGET		:=	$(shell basename $(CURDIR))
 export BUILD		?=	debug
 
@@ -23,7 +30,7 @@ ARCH			:=	-march=armv8-a -mcpu=cortex-a57
 
 CFLAGS			:=	-g -std=c11 -Wall -Werror -Os -fomit-frame-pointer \
 				-ffunction-sections -Wno-error=unused-function -Wno-unused-function \
-				-fno-builtin-printf \
+				-fno-builtin-printf -mgeneral-regs-only \
 				$(ARCH) $(INCLUDE)
 
 CFLAGS			+=	-D_GNU_SOURCE -D_FILE_OFFSET_BITS=64

@@ -13,7 +13,7 @@ PHDRS
 
 MEMORY
   {
-  ram : ORIGIN = 0x0000000014999000, LENGTH = 3M /* TODO verify the length */
+  ram : ORIGIN = 0x14980000, LENGTH = 3M /* TODO verify the length */
   dram : ORIGIN = 0x80000000, LENGTH = 0x0026f000 /* TODO verify the length */
   }
 
@@ -138,7 +138,7 @@ SECTIONS
         __stack_start__ = ABSOLUTE(.);
         _stack = .; 
         *(.stack)
-        . = . + 0x8000;
+        . = . + 0x1000;
         __stack_end__ = ABSOLUTE(.);
         __end__ = ABSOLUTE(.);
         . = ALIGN(0x1000);

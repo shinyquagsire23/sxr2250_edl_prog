@@ -2,6 +2,7 @@
 #include "uart.h"
 
 #include <string.h>
+#include "tinyprintf.h"
 
 #define USEC_PER_SEC            1000000UL
 
@@ -82,7 +83,7 @@ static inline void qcom_geni_serial_poll_tx_done()
 
 
 
-void uart_putc(char ch) {
+void uart_putc(void* putp, char ch) {
     writel(DEF_TX_WM, UART_REG_ADDR + SE_GENI_TX_WATERMARK_REG);
     qcom_geni_serial_setup_tx(UART_REG_ADDR, 1);
 
@@ -96,9 +97,9 @@ void uart_putc(char ch) {
 
 void uart_puts(const char* s) {
     while(*s) {
-        uart_putc(*s);
+        uart_putc(NULL, *s);
         if (*s == '\n') {
-            uart_putc('\r');
+            uart_putc(NULL, '\r');
         }
         s++;
     }
@@ -106,5 +107,8 @@ void uart_puts(const char* s) {
 
 int uart_init(int baudrate) {
     uart_baud = baudrate;
+
+    init_printf(NULL, uart_putc);
+
     return 0;
 }
