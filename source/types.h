@@ -64,4 +64,6 @@ typedef volatile s16 vs16;
 typedef volatile s32 vs32;
 typedef volatile s64 vs64;
 
+typedef intptr_t phys_addr_t;
+
 #endif // _TYPES_H_
